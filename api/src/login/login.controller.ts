@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post, Session, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, Session, UseGuards, ValidationPipe } from '@nestjs/common';
+import { SecretAuthGuard } from '../guards/secret.guard';
 import { TriggerOtpDto, VerifyOtpDto } from './dto/login.dto';
 import { LoginService } from './login.service';
 
@@ -6,6 +7,7 @@ import { LoginService } from './login.service';
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
 
+  @UseGuards(SecretAuthGuard)
   @Post('login')
   async login(
     @Session() session: Record<string, any>,
@@ -13,6 +15,7 @@ export class LoginController {
     return await this.loginService.createLogin(session, body);
   }
 
+  @UseGuards(SecretAuthGuard)
   @Post('verifyOtp')
   async verifyOtp(
     @Session() session: Record<string, any>,
