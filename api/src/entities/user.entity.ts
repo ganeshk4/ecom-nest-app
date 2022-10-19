@@ -15,6 +15,9 @@ export class USER {
   @Column({ name: 'MOBILE' })
   mobile: string;
 
+  @Column({ name: 'OTP_VERIFIED' })
+  otpVerified: boolean;
+
   @Column({ name: 'CREATED_AT', type: 'timestamp' })
   createAt: Date;
 

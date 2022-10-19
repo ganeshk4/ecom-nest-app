@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { USER } from '../entities/user.entity';
 import { Repository } from 'typeorm';
+import { TriggerOtpDto, VerifyOtpDto } from './dto/login.dto';
 
 @Injectable()
 export class LoginService {
@@ -10,19 +11,25 @@ export class LoginService {
   private readonly user: Repository<USER>,
   ) {}
 
-  async createLogin(session) {
-    const user = await this.user.findOne({ where: { mobile: '9920566922' }});
-    console.log(user);
+  async createLogin(session: Record<string, any>, data: TriggerOtpDto) {
+    const { mobile } = data;
+    session.mobile = mobile;
     session.otp = 1006;
     session.save();
     return {isSuccess: true};
   }
 
-  verifyOtp(session, body) {
-    console.log(session);
+  async verifyOtp(session: Record<string, any>, body: VerifyOtpDto) {
+    let valid = false;
     if (session.otp === Number(body.otp)) {
-      return {isSuccess: true};
+      const user = await this.user.findOne({ where: { mobile: session.mobile }});
+      if (user) {
+        if (!user.otpVerified) {
+          await this.user.update({id: user.id}, { otpVerified: true });
+        }
+        valid = true;
+      }
     }
-    return {isSuccess: false};
+    return {isSuccess: valid};
   }
 }
