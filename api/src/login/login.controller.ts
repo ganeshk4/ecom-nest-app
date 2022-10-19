@@ -6,7 +6,7 @@ export class LoginController {
   constructor(private readonly loginService: LoginService) {}
 
   @Post('login')
-  async login(@Session() session) {
+  async login(@Session() session, ) {
     await this.loginService.createLogin(session);
   }
 

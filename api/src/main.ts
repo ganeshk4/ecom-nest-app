@@ -21,6 +21,6 @@ async function bootstrap() {
       saveUninitialized: true,
     }),
   );
-  await app.listen(15005);
+  await app.listen(process.env.APP_PORT);
 }
 bootstrap();

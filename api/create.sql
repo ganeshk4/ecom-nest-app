@@ -1,10 +1,11 @@
 create table USER (
-  ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
+  ID INT(11) unsigned NOT NULL AUTO_INCREMENT ,
   FIRST_NAME varchar(100),
   LAST_NAME varchar(100),
   MOBILE varchar(12) NOT NULL,
   EMAIL varchar(255),
-  CREATED_AT timestamp,
-  MODIFIED_AT timestamp
+  CREATED_AT timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  MODIFIED_AT timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  primary key (ID)
 );
 

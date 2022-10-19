@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { USER } from 'src/entities/user.entity';
+import { USER } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class LoginService {
-  constructor(@InjectRepository(USER)
-  private readonly user: Repository<USER>,) {}
+  constructor(
+  @InjectRepository(USER)
+  private readonly user: Repository<USER>,
+  ) {}
 
-  createLogin(session) {
+  async createLogin(session) {
+    const user = await this.user.findOne({ where: { mobile: '9920566922' }});
+    console.log(user);
     session.otp = 1006;
     session.save();
     return {isSuccess: true};
