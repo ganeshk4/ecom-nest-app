@@ -21,15 +21,17 @@ export class LoginService {
 
   async verifyOtp(session: Record<string, any>, body: VerifyOtpDto) {
     let valid = false;
+    let user;
     if (session.otp === Number(body.otp)) {
-      const user = await this.user.findOne({ where: { mobile: session.mobile }});
+      user = await this.user.findOne({ where: { mobile: session.mobile }});
       if (user) {
+        session.user = user;
         if (!user.otpVerified) {
           await this.user.update({id: user.id}, { otpVerified: true });
         }
         valid = true;
       }
     }
-    return {isSuccess: valid};
+    return {isSuccess: valid, user};
   }
 }

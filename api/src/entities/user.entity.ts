@@ -19,7 +19,7 @@ export class USER {
   otpVerified: boolean;
 
   @Column({ name: 'CREATED_AT', type: 'timestamp' })
-  createAt: Date;
+  createdAt: Date;
 
   @Column({ name: 'MODIFIED_AT', type: 'timestamp' })
   modifiedAt: Date;
