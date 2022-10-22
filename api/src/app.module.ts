@@ -6,6 +6,8 @@ import { LoginModule } from './login/login.module';
 import configuration from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/typeorm.config';
+import { ProductModule } from './product/product.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { TypeOrmConfigService } from './config/typeorm.config';
       useClass: TypeOrmConfigService,
     }),
     LoginModule,
+    ProductModule,
+    CategoryModule
   ],
   controllers: [AppController],
   providers: [AppService],

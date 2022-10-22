@@ -2,13 +2,13 @@ import { LoginService } from './login.service';
 import { LoginController } from './login.controller';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { USER } from '../entities';
+import { User } from '../entities';
 
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      USER
+      User
     ]),
   ],
   controllers: [LoginController],

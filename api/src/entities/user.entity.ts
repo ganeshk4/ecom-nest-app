@@ -2,7 +2,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 //import { SkinnsiOrder, SkinnsiOrderItems, ToothsiAdminUser } from '.';
 @Entity("USER")
-export class USER {
+export class User {
   @PrimaryGeneratedColumn({ name: 'ID' })
   id: number;
 
