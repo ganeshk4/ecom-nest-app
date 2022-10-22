@@ -7,8 +7,8 @@ import { TriggerOtpDto, VerifyOtpDto } from './dto/login.dto';
 @Injectable()
 export class LoginService {
   constructor(
-  @InjectRepository(USER)
-  private readonly user: Repository<USER>,
+    @InjectRepository(USER)
+    private readonly user: Repository<USER>,
   ) {}
 
   async createLogin(session: Record<string, any>, data: TriggerOtpDto) {
@@ -16,22 +16,28 @@ export class LoginService {
     session.mobile = mobile;
     session.otp = 1006;
     session.save();
-    return {isSuccess: true};
+    return { isSuccess: true };
   }
 
   async verifyOtp(session: Record<string, any>, body: VerifyOtpDto) {
     let valid = false;
     let user;
     if (session.otp === Number(body.otp)) {
-      user = await this.user.findOne({ where: { mobile: session.mobile }});
+      user = await this.user.findOne({ where: { mobile: session.mobile } });
       if (user) {
         session.user = user;
         if (!user.otpVerified) {
-          await this.user.update({id: user.id}, { otpVerified: true });
+          await this.user.update({ id: user.id }, { otpVerified: true });
         }
         valid = true;
       }
     }
-    return {isSuccess: valid, user};
+    return { isSuccess: valid, user };
+  }
+
+  async getUser(session: Record<string, any>) {
+    console.log("getUser");
+    console.log(session.user);
+    return { isSuccess: true, user: session.user };
   }
 }
