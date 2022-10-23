@@ -1,5 +1,6 @@
 
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ProductCategory } from "./category.entity";
 @Entity("PRODUCT_CATEGORY_TYPE")
 export class ProductCategoryType {
   @PrimaryGeneratedColumn({ name: 'ID' })
@@ -13,4 +14,7 @@ export class ProductCategoryType {
 
   @Column({ name: 'MODIFIED_AT', type: 'timestamp' })
   modifiedAt: Date;
+
+  @OneToMany(() => ProductCategory, (category) => category.categoryType)
+  categories: ProductCategory[]
 }

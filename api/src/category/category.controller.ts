@@ -1,14 +1,14 @@
 import { Controller, Get, Session, UseGuards } from '@nestjs/common';
-import { CustomerAuthGuard } from '../guards/customer.guard';
+import { SecretAuthGuard } from '../guards/secret.guard';
 import { CategoryService } from './category.service';
 
-@Controller()
+@Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @UseGuards(CustomerAuthGuard)
-  @Get('userInfo')
-  async userInfo(@Session() session: Record<string, any>) {
-    return await this.categoryService.getUser(session);
+  @UseGuards(SecretAuthGuard)
+  @Get('all')
+  async getAllCategories() {
+    return await this.categoryService.getAllCategories();
   }
 }
