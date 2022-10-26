@@ -67,17 +67,24 @@ values ('Hands', 3);
 create table PRODUCT (
   ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
   NAME varchar(100),
+  DISPLAY_ID varchar(10),
   PRICE decimal(10,2) NOT NULL,
   DISPLAY_PRICE decimal(10,2),
-  DISCOUNT int(2),
-  DESCRIPTION JSON,
+  DISCOUNT int(2) DEFAULT 0,
+  RATINGS int(2) DEFAULT 0,
+  IMAGE_URL varchar(255) NOT NULL,
+  DESCRIPTION JSON NOT NULL,
   CREATED_AT timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   MODIFIED_AT timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   primary key (ID)
 );
 
-insert into PRODUCT (NAME, PRICE, DISPLAY_PRICE, DISCOUNT, DESCRIPTION) 
-values ('Necklace 1', 450, 500, 10, '["a","b"]');
+
+insert into PRODUCT (NAME, DISPLAY_ID, PRICE, DISPLAY_PRICE, DISCOUNT, DESCRIPTION, IMAGE_URL) 
+values ('Necklace 1', 'ABcfdr', 450, 500, 10, '["a","b"]', '');
+
+insert into PRODUCT (NAME, DISPLAY_ID, PRICE, DISPLAY_PRICE, DISCOUNT, DESCRIPTION, IMAGE_URL) 
+values ('Necklace 5% gold', 'tBcfdr', 24550, 30000, 10, '["lorem ipsum","dolor sit amet","lorem ipsum dolor sit amet"]', '');
 
 create table PRODUCT_CATERGORY_MAPPING (
   ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
