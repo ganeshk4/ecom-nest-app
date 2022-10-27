@@ -9,8 +9,8 @@ export class ProductController {
   @UseGuards(SecretAuthGuard)
   @Get('list')
   async productList(
-    @Query() params
+    @Query('search') search: string
   ) {
-    return await this.productService.getList(params);
+    return await this.productService.getList(JSON.parse(decodeURIComponent(search)));
   }
 }

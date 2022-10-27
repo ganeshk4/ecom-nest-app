@@ -15,6 +15,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       database: process.env.MYSQL_DB,
       entities: Object.entries(entities).map(entity => entity[1]) ?? [],
       synchronize: false,
+      logging: true
     };
   }
 }

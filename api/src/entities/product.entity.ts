@@ -1,4 +1,5 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ProductCategory } from './';
+import { Column, Entity, JoinColumn, ManyToMany, OneToMany, PrimaryGeneratedColumn, JoinTable } from "typeorm";
 @Entity("PRODUCT")
 export class Product {
   @PrimaryGeneratedColumn({ name: 'ID' })
@@ -34,7 +35,21 @@ export class Product {
   @Column({ name: 'MODIFIED_AT', type: 'timestamp' })
   modifiedAt: Date;
 
-  // @ManyToOne(() => ProductCategoryType)
-  // @JoinColumn({ name: "CATEGORY_TYPE", referencedColumnName: 'id' })
-  // categoryType: ProductCategoryType;
+  @ManyToMany(() => ProductCategory, category => category.products)
+  @JoinTable({
+    name: "PRODUCT_CATERGORY_MAPPING", // table name for the junction table of this relation
+    joinColumn: {
+        name: "PRODUCT_ID",
+        referencedColumnName: "id"
+    },
+    inverseJoinColumn: {
+        name: "CATEGORY_ID",
+        referencedColumnName: "id"
+    }
+  })
+  categories: ProductCategory[]
+
+
+  // @OneToMany(() => ProductCategoryMapping, (pcm) => pcm.product)
+  // categories: ProductCategoryMapping[];
 }
