@@ -1,5 +1,5 @@
-import { ProductCategory } from './';
-import { Column, Entity, JoinColumn, ManyToMany, OneToMany, PrimaryGeneratedColumn, JoinTable } from "typeorm";
+import { ProductCategory, ProductAvailability } from './';
+import { Column, Entity, JoinColumn, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn, JoinTable } from "typeorm";
 @Entity("PRODUCT")
 export class Product {
   @PrimaryGeneratedColumn({ name: 'ID' })
@@ -47,7 +47,11 @@ export class Product {
         referencedColumnName: "id"
     }
   })
-  categories: ProductCategory[]
+  categories: ProductCategory[];
+
+  @OneToOne(() => ProductAvailability)
+  @JoinColumn({ name: "ID", referencedColumnName: "productId" })
+  availablity: ProductAvailability
 
 
   // @OneToMany(() => ProductCategoryMapping, (pcm) => pcm.product)

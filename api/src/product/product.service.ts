@@ -25,6 +25,7 @@ export class ProductService {
       
       const q = this.product.createQueryBuilder("p")
       .innerJoinAndSelect("p.categories", "pc")
+      .innerJoinAndSelect("p.availablity", "pa")
       .innerJoinAndSelect("pc.categoryType", "pct")
       .andWhere("pc.id in (:categories)", {categories});
 
@@ -57,10 +58,14 @@ export class ProductService {
       }
 
     } else {
-      products = await this.product.find();
+      products = await this.product.createQueryBuilder("p")
+      .innerJoinAndSelect("p.availablity", "pa")
+      .getMany();
+      
     }
-    //console.log(products);
     products = products.filter(prod => !prod.rejected);
+
+    //console.log(products);
     return { isSuccess: true, products };
   }
 }
