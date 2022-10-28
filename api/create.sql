@@ -83,6 +83,14 @@ create table PRODUCT (
 insert into PRODUCT (NAME, DISPLAY_ID, PRICE, DISPLAY_PRICE, DISCOUNT, DESCRIPTION, IMAGE_URL) 
 values ('Necklace 1', 'ABcfdr', 450, 500, 10, '["a","b"]', '');
 
+update PRODUCT
+set IMAGE_URL="https://storage.cloud.google.com/myfirstprojecttestecom/productimages/51lndCdP7uL._SX679_.jpg?authuser=1"
+where ID=1;
+
+update PRODUCT
+set IMAGE_URL="https://storage.cloud.google.com/myfirstprojecttestecom/productimages/Screenshot%202021-11-11%20at%205.49.31%20PM.png?authuser=1"
+where ID=2;
+
 insert into PRODUCT (NAME, DISPLAY_ID, PRICE, DISPLAY_PRICE, DISCOUNT, DESCRIPTION, IMAGE_URL) 
 values ('Necklace 5% gold', 'tBcfdr', 24550, 30000, 10, '["lorem ipsum","dolor sit amet","lorem ipsum dolor sit amet"]', '');
 
@@ -112,6 +120,51 @@ values (6,2);
 
 
 create table PRODUCT_AVAILABILITY (
+  ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
+  PRODUCT_ID int(11) unsigned,
+  QTY int(11),
+  CREATED_AT timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  MODIFIED_AT timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  primary key (ID),
+  CONSTRAINT PRODUCT_AVAILABILITY_ibfk_1 FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT (ID)
+);
+
+insert into PRODUCT_AVAILABILITY (PRODUCT_ID, QTY)
+values (1,9);
+insert into PRODUCT_AVAILABILITY (PRODUCT_ID, QTY)
+values (2,0);
+
+
+create table CART (
+  ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
+  USER_ID int(11) unsigned NOT NULL,
+  STATUS enum('ACTIVE'),
+  TOTAL_AMOUNT decimal(10,2) DEFAULT 0,
+  PAID_AMOUNT decimal(10,2) DEFAULT 0,
+  CREATED_AT timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  MODIFIED_AT timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  primary key (ID),
+  CONSTRAINT CART_ibfk_1 FOREIGN KEY (USER_ID) REFERENCES USER (ID)
+);
+
+create table CART_ITEMS (
+  ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
+  CART_ID int(11) unsigned NOT NULL,
+  PRODUCT_ID int(11) unsigned NOT NULL,
+  STATUS enum('ACTIVE', 'DELETED'),
+  PRICE decimal(10,2) NOT NULL,
+  DISPLAY_PRICE decimal(10,2),
+  IMAGE_URL varchar(255) NOT NULL,
+  DESCRIPTION JSON NOT NULL,
+  CREATED_AT timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  MODIFIED_AT timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  primary key (ID),
+  CONSTRAINT CART_ITEMS_ibfk_1 FOREIGN KEY (CART_ID) REFERENCES CART (ID)
+);
+
+
+
+create table PLACED_ORDERS (
   ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
   PRODUCT_ID int(11) unsigned,
   QTY int(11),
