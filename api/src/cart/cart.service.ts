@@ -49,14 +49,13 @@ export class CartService {
     const userCart = await this.getActiveCart(session.userId);
 
     const product = await this.product.findOne({ where : { id: productId }});
-    
-
-    
 
     const existingCartItem = await this.cartItem.findOne({ where : { productId: productId, cartId: userCart.id }});
-
+    const pAvailability = await this.prodAvailability.findOne({ where: { productId } });
+    if (pAvailability.availableQty < qty) {
+      throw new ConflictException('Quantiy not available');
+    }
     if (existingCartItem && existingCartItem.id) {
-      await this.decreaseProductQuantity(productId, qty);
       await this.cartItem.update({
         id: existingCartItem.id
       }, {
@@ -75,10 +74,8 @@ export class CartService {
       newCartItem.imageUrl = product.imageUrl;
       newCartItem.description = product.description;
       newCartItem.qty = qty;
-      await this.decreaseProductQuantity(productId, qty);
       await this.cartItem.save(newCartItem);
     }
-
 
     const items = await this.cartItem.find({ where : { cartId: userCart.id } });
 
