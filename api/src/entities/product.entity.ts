@@ -11,8 +11,17 @@ export class Product {
   @Column({ name: 'DISPLAY_ID' })
   displayId: number;
 
-  @Column({ name: 'PRICE' })
-  price: number;
+  @Column({ name: 'SELLING_PRICE_AT' })
+  sellingPriceAT: number;
+
+  @Column({ name: 'TAX_AMOUNT' })
+  taxAmount: number;
+
+  @Column({ name: 'TAX_PERCENT' })
+  taxPercent: number;
+
+  @Column({ name: 'SELLING_PRICE_BT' })
+  sellingPriceBT: number;
 
   @Column({ name: 'DISPLAY_PRICE' })
   displayPrice: number;

@@ -79,6 +79,11 @@ create table PRODUCT (
   primary key (ID)
 );
 
+ALTER TABLE PRODUCT RENAME COLUMN PRICE TO SELLING_PRICE_AT;
+ALTER TABLE PRODUCT ADD COLUMN TAX_AMOUNT decimal(10,2) unsigned NOT NULL DEFAULT 0;
+ALTER TABLE PRODUCT ADD COLUMN TAX_PERCENT decimal(2,2) unsigned NOT NULL DEFAULT 0;
+ALTER TABLE PRODUCT ADD COLUMN SELLING_PRICE_BT decimal(10,2) unsigned NOT NULL DEFAULT 0;
+
 
 insert into PRODUCT (NAME, DISPLAY_ID, PRICE, DISPLAY_PRICE, DISCOUNT, DESCRIPTION, IMAGE_URL) 
 values ('Necklace 1', 'ABcfdr', 450, 500, 10, '["a","b"]', '');
@@ -87,12 +92,12 @@ update PRODUCT
 set IMAGE_URL="https://storage.cloud.google.com/myfirstprojecttestecom/productimages/51lndCdP7uL._SX679_.jpg?authuser=1"
 where ID=1;
 
+insert into PRODUCT (NAME, DISPLAY_ID, PRICE, DISPLAY_PRICE, DISCOUNT, DESCRIPTION, IMAGE_URL) 
+values ('Necklace 5% gold', 'tBcfdr', 24550, 30000, 10, '["lorem ipsum","dolor sit amet","lorem ipsum dolor sit amet"]', '');
+
 update PRODUCT
 set IMAGE_URL="https://storage.cloud.google.com/myfirstprojecttestecom/productimages/Screenshot%202021-11-11%20at%205.49.31%20PM.png?authuser=1"
 where ID=2;
-
-insert into PRODUCT (NAME, DISPLAY_ID, PRICE, DISPLAY_PRICE, DISCOUNT, DESCRIPTION, IMAGE_URL) 
-values ('Necklace 5% gold', 'tBcfdr', 24550, 30000, 10, '["lorem ipsum","dolor sit amet","lorem ipsum dolor sit amet"]', '');
 
 create table PRODUCT_CATERGORY_MAPPING (
   ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -139,30 +144,44 @@ create table CART (
   ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
   USER_ID int(11) unsigned NOT NULL,
   STATUS enum('ACTIVE'),
-  TOTAL_AMOUNT decimal(10,2) DEFAULT 0,
-  PAID_AMOUNT decimal(10,2) DEFAULT 0,
+  PAYABLE_AMOUNT decimal(10,2) DEFAULT 0,
   CREATED_AT timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   MODIFIED_AT timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   primary key (ID),
   CONSTRAINT CART_ibfk_1 FOREIGN KEY (USER_ID) REFERENCES USER (ID)
 );
 
-create table CART_ITEMS (
+create table CART_ITEM (
   ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
   CART_ID int(11) unsigned NOT NULL,
+  USER_ID int(11) unsigned NOT NULL,
   PRODUCT_ID int(11) unsigned NOT NULL,
-  STATUS enum('ACTIVE', 'DELETED'),
-  PRICE decimal(10,2) NOT NULL,
+  SELLING_PRICE_AT decimal(10,2) unsigned NOT NULL,
+  TAX_AMOUNT decimal(10,2) unsigned NOT NULL,
+  TAX_PERCENT decimal(2,2) unsigned NOT NULL,
+  SELLING_PRICE_BT decimal(10,2) NOT NULL,
   DISPLAY_PRICE decimal(10,2),
   IMAGE_URL varchar(255) NOT NULL,
   DESCRIPTION JSON NOT NULL,
   CREATED_AT timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   MODIFIED_AT timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   primary key (ID),
-  CONSTRAINT CART_ITEMS_ibfk_1 FOREIGN KEY (CART_ID) REFERENCES CART (ID)
+  CONSTRAINT CART_ITEMS_ibfk_1 FOREIGN KEY (CART_ID) REFERENCES CART (ID),
+  CONSTRAINT CART_ITEMS_ibfk_2 FOREIGN KEY (USER_ID) REFERENCES USER (ID)
 );
 
-
+create table CART_SNAPSHOT (
+  ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
+  USER_ID int(11) unsigned NOT NULL,
+  ORDER_ID int(11) unsigned NOT NULL,
+  STATUS enum('ACTIVE', 'VERIFICATION_PENDING', 'VERIFIED'),
+  TOTAL_AMOUNT decimal(10,2) DEFAULT 0,
+  PAID_AMOUNT decimal(10,2) DEFAULT 0,
+  CREATED_AT timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  MODIFIED_AT timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  primary key (ID),
+  CONSTRAINT CART_SNAPSHOT_ibfk_1 FOREIGN KEY (CART_ID) REFERENCES CART (ID)
+);
 
 create table PLACED_ORDERS (
   ID INT(11) unsigned NOT NULL AUTO_INCREMENT,

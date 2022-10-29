@@ -1,5 +1,5 @@
 import { SecretAuthGuard } from './../guards/secret.guard';
-import { Controller, Get, Query, Session, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
 
 @Controller('product')
