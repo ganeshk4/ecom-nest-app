@@ -29,8 +29,11 @@ export class CartItem {
   @Column({ name: 'DISPLAY_PRICE' })
   displayPrice: number;
 
+  @Column({ name: 'QTY' })
+  qty: number;
+
   @Column({ name: 'IMAGE_URL' })
-  imgUrl: string;
+  imageUrl: string;
 
   @Column({ name: 'DESCRIPTION', type: 'json' })
   description: string[];

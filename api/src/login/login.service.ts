@@ -26,6 +26,7 @@ export class LoginService {
       user = await this.user.findOne({ where: { mobile: session.mobile } });
       if (user) {
         session.user = user;
+        session.userId = user.id;
         if (!user.otpVerified) {
           await this.user.update({ id: user.id }, { otpVerified: true });
         }

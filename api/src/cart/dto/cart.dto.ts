@@ -2,5 +2,8 @@ import { IsNumber, Length } from "class-validator";
 
 export class AddToCartDto {
   @IsNumber()
-  productId: Number;
+  productId: number;
+
+  @IsNumber()
+  qty: number;
 }

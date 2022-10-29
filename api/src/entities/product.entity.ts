@@ -33,7 +33,7 @@ export class Product {
   ratings: number;
 
   @Column({ name: 'IMAGE_URL' })
-  imageUrl: number;
+  imageUrl: string;
 
   @Column({ name: 'DESCRIPTION', type: 'json' })
   description: string[];

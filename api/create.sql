@@ -81,9 +81,9 @@ create table PRODUCT (
 
 ALTER TABLE PRODUCT RENAME COLUMN PRICE TO SELLING_PRICE_AT;
 ALTER TABLE PRODUCT ADD COLUMN TAX_AMOUNT decimal(10,2) unsigned NOT NULL DEFAULT 0;
-ALTER TABLE PRODUCT ADD COLUMN TAX_PERCENT decimal(2,2) unsigned NOT NULL DEFAULT 0;
+ALTER TABLE PRODUCT ADD COLUMN TAX_PERCENT decimal(4,2) unsigned NOT NULL DEFAULT 0;
 ALTER TABLE PRODUCT ADD COLUMN SELLING_PRICE_BT decimal(10,2) unsigned NOT NULL DEFAULT 0;
-
+ALTER TABLE PRODUCT MODIFY COLUMN TAX_PERCENT decimal(4,2) unsigned NOT NULL DEFAULT 0;
 
 insert into PRODUCT (NAME, DISPLAY_ID, PRICE, DISPLAY_PRICE, DISCOUNT, DESCRIPTION, IMAGE_URL) 
 values ('Necklace 1', 'ABcfdr', 450, 500, 10, '["a","b"]', '');
@@ -92,11 +92,25 @@ update PRODUCT
 set IMAGE_URL="https://storage.cloud.google.com/myfirstprojecttestecom/productimages/51lndCdP7uL._SX679_.jpg?authuser=1"
 where ID=1;
 
+update PRODUCT
+set 
+TAX_AMOUNT=50,
+TAX_PERCENT=10,
+SELLING_PRICE_BT=400
+where ID=1;
+
 insert into PRODUCT (NAME, DISPLAY_ID, PRICE, DISPLAY_PRICE, DISCOUNT, DESCRIPTION, IMAGE_URL) 
 values ('Necklace 5% gold', 'tBcfdr', 24550, 30000, 10, '["lorem ipsum","dolor sit amet","lorem ipsum dolor sit amet"]', '');
 
 update PRODUCT
 set IMAGE_URL="https://storage.cloud.google.com/myfirstprojecttestecom/productimages/Screenshot%202021-11-11%20at%205.49.31%20PM.png?authuser=1"
+where ID=2;
+
+update PRODUCT
+set 
+TAX_AMOUNT=550,
+TAX_PERCENT=10,
+SELLING_PRICE_BT=24000
 where ID=2;
 
 create table PRODUCT_CATERGORY_MAPPING (
@@ -145,6 +159,8 @@ create table CART (
   USER_ID int(11) unsigned NOT NULL,
   STATUS enum('ACTIVE'),
   PAYABLE_AMOUNT decimal(10,2) DEFAULT 0,
+  TOTAL_TAX_AMOUNT decimal(10,2) unsigned NOT NULL DEFAULT 0,
+  TOTAL_SELLING_PRICE_BT decimal(10,2) NOT NULL DEFAULT 0,
   CREATED_AT timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   MODIFIED_AT timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   primary key (ID),
@@ -158,10 +174,11 @@ create table CART_ITEM (
   PRODUCT_ID int(11) unsigned NOT NULL,
   SELLING_PRICE_AT decimal(10,2) unsigned NOT NULL,
   TAX_AMOUNT decimal(10,2) unsigned NOT NULL,
-  TAX_PERCENT decimal(2,2) unsigned NOT NULL,
+  TAX_PERCENT decimal(4,2) unsigned NOT NULL,
   SELLING_PRICE_BT decimal(10,2) NOT NULL,
   DISPLAY_PRICE decimal(10,2),
   IMAGE_URL varchar(255) NOT NULL,
+  QTY int(11) unsigned NOT NULL DEFAULT 1,
   DESCRIPTION JSON NOT NULL,
   CREATED_AT timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   MODIFIED_AT timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
@@ -169,6 +186,8 @@ create table CART_ITEM (
   CONSTRAINT CART_ITEMS_ibfk_1 FOREIGN KEY (CART_ID) REFERENCES CART (ID),
   CONSTRAINT CART_ITEMS_ibfk_2 FOREIGN KEY (USER_ID) REFERENCES USER (ID)
 );
+
+ALTER TABLE CART_ITEM MODIFY COLUMN TAX_PERCENT decimal(4,2) unsigned NOT NULL DEFAULT 0;
 
 create table CART_SNAPSHOT (
   ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
