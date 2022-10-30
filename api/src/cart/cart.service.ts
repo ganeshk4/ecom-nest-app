@@ -32,7 +32,7 @@ export class CartService {
 
   private async decreaseProductQuantity(productId: number, qty: number) {
     const pAvailability = await this.prodAvailability.findOne({ where: { productId } });
-    if (pAvailability.availableQty < qty) {
+    if (Number(pAvailability.availableQty) < Number(qty)) {
       throw new ConflictException('Quantiy not available');
     }
     const remainingQty = Number(pAvailability.availableQty) - Number(qty);
@@ -52,7 +52,7 @@ export class CartService {
 
     const existingCartItem = await this.cartItem.findOne({ where : { productId: productId, cartId: userCart.id }});
     const pAvailability = await this.prodAvailability.findOne({ where: { productId } });
-    if (pAvailability.availableQty < qty) {
+    if (Number(pAvailability.availableQty) < Number(existingCartItem?.qty||0) + Number(qty)) {
       throw new ConflictException('Quantiy not available');
     }
     if (existingCartItem && existingCartItem.id) {
@@ -66,6 +66,7 @@ export class CartService {
       newCartItem.cartId = userCart.id;
       newCartItem.userId = session.userId;
       newCartItem.productId = product.id;
+      newCartItem.name = product.name;
       newCartItem.sellingPriceAT = product.sellingPriceAT;
       newCartItem.taxAmount = product.taxAmount;
       newCartItem.taxPercent = product.taxPercent;
@@ -90,8 +91,18 @@ export class CartService {
       payableAmount
     });
 
-
     return { isSuccess: true };
+  }
+
+  async getDetails(session: Record<string, any>) {
+    const userId = session.userId;
+
+    const q = this.cart.createQueryBuilder('c')
+    .innerJoinAndSelect('c.cartItems', 'ci')
+    .where('c.userId =:userId', {userId});
+
+    const data = await q.getMany();
+    return { isSuccess: true,  data }
   }
   
 }

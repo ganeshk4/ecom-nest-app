@@ -99,7 +99,7 @@ TAX_PERCENT=10,
 SELLING_PRICE_BT=400
 where ID=1;
 
-insert into PRODUCT (NAME, DISPLAY_ID, PRICE, DISPLAY_PRICE, DISCOUNT, DESCRIPTION, IMAGE_URL) 
+insert into PRODUCT (NAME, DISPLAY_ID, SELLING_PRICE_AT, DISPLAY_PRICE, DISCOUNT, DESCRIPTION, IMAGE_URL) 
 values ('Necklace 5% gold', 'tBcfdr', 24550, 30000, 10, '["lorem ipsum","dolor sit amet","lorem ipsum dolor sit amet"]', '');
 
 update PRODUCT
@@ -112,6 +112,20 @@ TAX_AMOUNT=550,
 TAX_PERCENT=10,
 SELLING_PRICE_BT=24000
 where ID=2;
+
+insert into PRODUCT (NAME, DISPLAY_ID, SELLING_PRICE_AT, DISPLAY_PRICE, DISCOUNT, DESCRIPTION, IMAGE_URL, TAX_AMOUNT, TAX_PERCENT, SELLING_PRICE_BT) 
+values ('1% gold bangles', 'tBffdg', 14550, 18000, 10, '["lorem ipsum","dolor sit amet","lorem ipsum dolor sit amet"]',
+'https://storage.cloud.google.com/myfirstprojecttestecom/productimages/51lndCdP7uL._SX679_.jpg?authuser=1', 3550, 16, 11000);
+
+insert into PRODUCT_AVAILABILITY (PRODUCT_ID, QTY)
+values (3,9);
+
+insert into PRODUCT_CATERGORY_MAPPING (CATEGORY_ID, PRODUCT_ID)
+values (2,3);
+insert into PRODUCT_CATERGORY_MAPPING (CATEGORY_ID, PRODUCT_ID)
+values (4,3);
+insert into PRODUCT_CATERGORY_MAPPING (CATEGORY_ID, PRODUCT_ID)
+values (8,3);
 
 create table PRODUCT_CATERGORY_MAPPING (
   ID INT(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -172,6 +186,7 @@ create table CART_ITEM (
   CART_ID int(11) unsigned NOT NULL,
   USER_ID int(11) unsigned NOT NULL,
   PRODUCT_ID int(11) unsigned NOT NULL,
+  NAME varchar(100),
   SELLING_PRICE_AT decimal(10,2) unsigned NOT NULL,
   TAX_AMOUNT decimal(10,2) unsigned NOT NULL,
   TAX_PERCENT decimal(4,2) unsigned NOT NULL,

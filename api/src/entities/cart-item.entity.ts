@@ -14,6 +14,9 @@ export class CartItem {
   @Column({ name: 'PRODUCT_ID' })
   productId: number;
 
+  @Column({ name: 'NAME' })
+  name: string;
+
   @Column({ name: 'SELLING_PRICE_AT' })
   sellingPriceAT: number;
 

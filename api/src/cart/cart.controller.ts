@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Session, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Session, UseGuards } from '@nestjs/common';
 import { CustomerAuthGuard } from '../guards/customer.guard';
 import { CartService } from './cart.service';
 import { AddToCartDto } from './dto/cart.dto';
@@ -14,5 +14,13 @@ export class CartController {
     @Body() options: AddToCartDto
   ) {
     return await this.cartService.addToCart(options, session);
+  }
+
+  @UseGuards(CustomerAuthGuard)
+  @Get('details')
+  async details(
+    @Session() session: Record<string, any>
+  ) {
+    return await this.cartService.getDetails(session);
   }
 }

@@ -1,5 +1,5 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { User, CartItem } from "./";
 @Entity("CART")
 export class Cart {
   @PrimaryGeneratedColumn({ name: 'ID' })
@@ -23,4 +23,7 @@ export class Cart {
   @ManyToOne(() => User)
   @JoinColumn({ name: "USER_ID", referencedColumnName: 'id' })
   user: User;
+
+  @OneToMany(()=> CartItem, (item) => item.cart)
+  cartItems: CartItem
 }
