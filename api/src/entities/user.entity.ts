@@ -15,6 +15,9 @@ export class User {
   @Column({ name: 'MOBILE' })
   mobile: string;
 
+  @Column({ name: 'EMAIL' })
+  email: string;
+
   @Column({ name: 'OTP_VERIFIED' })
   otpVerified: boolean;
 
