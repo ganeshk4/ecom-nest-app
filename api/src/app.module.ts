@@ -9,6 +9,7 @@ import { TypeOrmConfigService } from './config/typeorm.config';
 import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
 import { CartModule } from './cart/cart.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { CartModule } from './cart/cart.module';
     LoginModule,
     ProductModule,
     CategoryModule,
-    CartModule
+    CartModule,
+    PaymentModule
   ],
   controllers: [AppController],
   providers: [AppService],

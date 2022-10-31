@@ -21,6 +21,14 @@ export class CartController {
   async details(
     @Session() session: Record<string, any>
   ) {
-    return await this.cartService.getDetails(session);
+    return await this.cartService.getCartDetails(session);
+  }
+
+  @UseGuards(CustomerAuthGuard)
+  @Get('startcheckout')
+  async startcheckout(
+    @Session() session: Record<string, any>
+  ) {
+    return await this.cartService.getOrderLink(session);
   }
 }

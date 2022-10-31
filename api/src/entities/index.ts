@@ -6,3 +6,5 @@ export { Product } from "./product.entity";
 export { ProductCategoryMapping } from "./product-category-mapping.entity";
 export { ProductAvailability } from "./product-availability.entity";
 export { Cart } from "./cart.entity";
+export { CartSnapshot } from './cart-snapshot.entity';
+export { CartSnapshotItem } from './cart-snapshot-item.entity';

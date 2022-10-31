@@ -1,8 +1,9 @@
-import { Cart, CartItem, Product, ProductAvailability } from '../entities';
+import { Cart, CartItem, Product, ProductAvailability, CartSnapshotItem, CartSnapshot } from '../entities';
 import { CartService } from './cart.service';
 import { CartController } from './cart.controller';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PaymentModule } from '../payment/payment.module';
 
 
 @Module({
@@ -11,8 +12,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       Product,
       Cart,
       CartItem,
-      ProductAvailability
+      ProductAvailability,
+      CartSnapshot,
+      CartSnapshotItem
     ]),
+    PaymentModule
   ],
   controllers: [CartController],
   providers: [CartService],
