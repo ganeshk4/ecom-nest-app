@@ -1,3 +1,5 @@
+export { OrderItem } from './order-item.entity';
+export { Order } from './order.entity';
 export { CartItem } from './cart-item.entity';
 export { User } from "./user.entity";
 export { ProductCategoryType } from "./category-type.entity";

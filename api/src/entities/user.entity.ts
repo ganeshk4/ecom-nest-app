@@ -1,6 +1,5 @@
 
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-//import { SkinnsiOrder, SkinnsiOrderItems, ToothsiAdminUser } from '.';
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity("USER")
 export class User {
   @PrimaryGeneratedColumn({ name: 'ID' })
@@ -26,12 +25,4 @@ export class User {
 
   @Column({ name: 'MODIFIED_AT', type: 'timestamp' })
   modifiedAt: Date;
-
-  // @ManyToOne(() => SkinnsiOrder)
-  // @JoinColumn({ name: "ORDER_ID", referencedColumnName: 'id' })
-  // order: SkinnsiOrder;
-
-  // @OneToOne(() => SkinnsiOrderItems)
-  // @JoinColumn({ name: "ORDER_ITEM_ID", referencedColumnName: 'id' })
-  // orderItem: SkinnsiOrderItems;
 }

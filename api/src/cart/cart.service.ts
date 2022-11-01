@@ -1,7 +1,8 @@
-import { AddToCartDto } from './dto/cart.dto';
+import { Order } from './../entities/order.entity';
+import { AddToCartDto, RzpResponse } from './dto/cart.dto';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Cart, CartItem, CartSnapshot, CartSnapshotItem, Product, ProductAvailability } from '../entities';
+import { Cart, CartItem, CartSnapshot, CartSnapshotItem, OrderItem, Product, ProductAvailability } from '../entities';
 import { Repository } from 'typeorm';
 import { PaymentService } from '../payment/payment.service';
 
@@ -14,10 +15,14 @@ export class CartService {
     private readonly cart: Repository<Cart>,
     @InjectRepository(CartSnapshot)
     private readonly cartSnapshot: Repository<CartSnapshot>,
+    @InjectRepository(Order)
+    private readonly order: Repository<Order>,
     @InjectRepository(CartItem)
     private readonly cartItem: Repository<CartItem>,
     @InjectRepository(CartSnapshotItem)
     private readonly cartSnapshotItem: Repository<CartSnapshotItem>,
+    @InjectRepository(OrderItem)
+    private readonly orderItem: Repository<OrderItem>,
     @InjectRepository(ProductAvailability)
     private readonly prodAvailability: Repository<ProductAvailability>,
     private readonly paymentService: PaymentService
@@ -185,5 +190,104 @@ export class CartService {
     }
     //const data = await q.getOne();
     return { isSuccess: true, razorpay_order_id }
+  }
+
+
+  async verifyOrder(session: Record<string, any>, rzpResponse: RzpResponse)  {
+    const isValid = await this.paymentService.validateSignature(rzpResponse);
+    if (!isValid) {
+      throw new ConflictException('invalid request response');
+    }
+    
+    let isPaymentVerified = false;
+    const { data: payment } = await this.paymentService.fetchPayment(rzpResponse.razorpay_payment_id);
+
+    if (payment && payment.id === rzpResponse.razorpay_payment_id && payment.captured) {
+      isPaymentVerified = true;
+    }
+
+    if (!isPaymentVerified) {
+      throw new ConflictException('payment not verified');
+    }
+
+    return await this.confirmOrder(payment, rzpResponse);
+    
+  }
+
+  private async confirmOrder(payment: any, rzpResponse: RzpResponse) {
+    // run validations before calling this function
+    const rzpOrderId = payment.order_id;
+    let cartSnapshot = await this.cartSnapshot.findOne({ where: { razorpay_order_id: rzpOrderId  } });
+    const cartSnapshotItems = await this.cartSnapshotItem.find({ where: { cartSnId: cartSnapshot.id} });
+    const paidAmount = Number(payment.amount)/100;
+    if (Number(cartSnapshot.payableAmount) === paidAmount) {
+      let totalTaxAmt=0;
+      let totalSellingPriceBT=0;
+      for (const item of cartSnapshotItems) {
+        totalTaxAmt = Number(totalTaxAmt) + (Number(item.taxAmount)*Number(item.qty));
+        totalSellingPriceBT = Number(totalSellingPriceBT) + (Number(item.sellingPriceBT)*Number(item.qty));
+      }
+      await this.cartSnapshot.update({
+        id: cartSnapshot.id
+      },{
+        paidAmount,
+        status: "VERIFIED",
+        razorpay_payment_id: payment.id,
+        razorpay_signature: rzpResponse.razorpay_signature,
+        razorpay_response: payment,
+        fromWebhook: false,
+        totalTaxAmount: totalTaxAmt,
+        totalSellingPriceBT
+      });
+
+      cartSnapshot = await this.cartSnapshot.findOne({ where: { id: cartSnapshot.id  } });
+
+      const newOrder = new Order();
+      newOrder.userId = cartSnapshot.userId;
+      newOrder.cartSnId = cartSnapshot.id;
+      newOrder.status = "PLACED";
+      newOrder.payableAmount = cartSnapshot.payableAmount;
+      newOrder.paidAmount = paidAmount;
+      newOrder.totalTaxAmount = totalTaxAmt;
+      newOrder.totalSellingPriceBT = totalSellingPriceBT;
+
+      const createdOrder = await this.order.save(newOrder);
+  
+      for (const item of cartSnapshotItems) {
+        await this.decreaseProductQuantity(item.productId, item.qty);
+
+        const newOrderItem = new OrderItem();
+        newOrderItem.orderId = createdOrder.id;
+        newOrderItem.userId = createdOrder.userId;
+        newOrderItem.productId = item.productId;
+        newOrderItem.name = item.name;
+        newOrderItem.status = 'PLACED';
+        newOrderItem.sellingPriceAT = item.sellingPriceAT;
+        newOrderItem.taxAmount = item.taxAmount;
+        newOrderItem.taxPercent = item.taxPercent;
+        newOrderItem.sellingPriceBT = item.sellingPriceBT;
+        newOrderItem.displayPrice = item.displayPrice;
+        newOrderItem.qty = item.qty;
+        newOrderItem.imageUrl = item.imageUrl;
+        newOrderItem.description = item.description;
+        await this.orderItem.save(newOrderItem);
+
+        await this.cartItem.delete({ userId: createdOrder.userId, productId: item.productId});
+      }
+
+      
+      await this.cartSnapshot.update({
+        id: cartSnapshot.id
+      },{
+        orderId: createdOrder.id
+      });
+
+      await this.order.update({
+        id: createdOrder.id
+      },{
+        status: "QUEUED"
+      });
+    }
+    return { isSuccess: true };
   }
 }

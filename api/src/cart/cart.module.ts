@@ -1,4 +1,13 @@
-import { Cart, CartItem, Product, ProductAvailability, CartSnapshotItem, CartSnapshot } from '../entities';
+import { 
+  Cart,
+  CartItem,
+  Product,
+  ProductAvailability,
+  CartSnapshotItem,
+  CartSnapshot,
+  Order,
+  OrderItem 
+} from '../entities';
 import { CartService } from './cart.service';
 import { CartController } from './cart.controller';
 import { Module } from '@nestjs/common';
@@ -14,7 +23,9 @@ import { PaymentModule } from '../payment/payment.module';
       CartItem,
       ProductAvailability,
       CartSnapshot,
-      CartSnapshotItem
+      CartSnapshotItem,
+      Order,
+      OrderItem
     ]),
     PaymentModule
   ],

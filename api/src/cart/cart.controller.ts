@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post, Session, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Session, UseGuards, ValidationPipe } from '@nestjs/common';
 import { CustomerAuthGuard } from '../guards/customer.guard';
 import { CartService } from './cart.service';
-import { AddToCartDto } from './dto/cart.dto';
+import { AddToCartDto, RzpResponse } from './dto/cart.dto';
 
 @Controller('cart')
 export class CartController {
@@ -30,5 +30,14 @@ export class CartController {
     @Session() session: Record<string, any>
   ) {
     return await this.cartService.getOrderLink(session);
+  }
+
+  @UseGuards(CustomerAuthGuard)
+  @Post('verifyPayment')
+  async verify(
+    @Body(ValidationPipe) options: RzpResponse,
+    @Session() session: Record<string, any>
+  ) {
+    return await this.cartService.verifyOrder(session, options);
   }
 }
